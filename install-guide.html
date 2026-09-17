@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ENACT SDK — Installation Guide</title>
+<style>
+  :root{
+    --ink:#1a2430; --muted:#5b6b7a; --line:#e3e9ef; --soft:#f4f7fa; --panel:#ffffff;
+    --brand:#0e7f6b; --brand2:#12b886;
+    --green-s:#e7f6ee; --blue:#2b6cb0; --blue-s:#e8f0fb; --amber:#b7791f; --amber-s:#fbf3e2;
+    --radius:14px; --shadow:0 8px 30px rgba(15,23,32,.08);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;color:var(--ink);background:var(--soft);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:var(--brand);text-decoration:none}
+  a:hover{text-decoration:underline}
+  h1,h2,h3,h4{line-height:1.25;margin:0 0 .4em}
+  code{background:#eef2f6;border:1px solid #e0e6ec;border-radius:6px;padding:1px 6px;font-size:.86em;font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;color:#0b3d34;word-break:break-all}
+  .wrap{max-width:900px;margin:0 auto;padding:0 28px}
+  .muted{color:var(--muted)}
+
+  /* print button */
+  .toolbar{position:fixed;top:18px;right:18px;z-index:50}
+  .btn{background:linear-gradient(135deg,var(--brand2),var(--brand));color:#fff;border:none;border-radius:10px;
+    padding:11px 18px;font-size:.92rem;font-weight:600;cursor:pointer;box-shadow:0 8px 22px rgba(14,127,107,.35);display:inline-flex;align-items:center;gap:8px}
+  .btn:hover{filter:brightness(1.05)}
+
+  /* hero */
+  header.hero{background:radial-gradient(1200px 500px at 75% -30%,rgba(18,184,134,.28),transparent),linear-gradient(180deg,#0f1720,#131e2a);color:#eaf1f6;padding:56px 0 60px}
+  .hero .pill{display:inline-block;background:rgba(18,184,134,.15);color:#7ff0cf;border:1px solid rgba(18,184,134,.4);padding:5px 14px;border-radius:999px;font-size:.75rem;font-weight:600;letter-spacing:.4px;text-transform:uppercase}
+  .hero .brandrow{display:flex;align-items:center;gap:14px;margin:16px 0 10px}
+  .hero .brandrow img{width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,.06);padding:4px;border:1px solid rgba(255,255,255,.12);flex:none}
+  .hero h1{font-size:2.4rem;margin:0;color:#fff}
+  .hero p.lead{font-size:1.1rem;color:#b9c7d3;max-width:680px;margin:0}
+  .hero .meta{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px}
+  .hero .meta span{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#d7e2ec;font-size:.82rem;padding:6px 13px;border-radius:9px}
+
+  /* generic section */
+  section{padding:40px 0 8px}
+  .sec-tag{color:var(--brand);font-weight:700;font-size:.76rem;letter-spacing:1.4px;text-transform:uppercase}
+  h2.sec{font-size:1.55rem;margin:6px 0 6px;padding-bottom:10px;border-bottom:2px solid var(--line)}
+  h2 .num{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--brand2),var(--brand));color:#fff;font-size:.95rem;margin-right:10px;vertical-align:middle}
+  .lede{color:var(--muted);max-width:720px;font-size:1.02rem;margin:0 0 8px}
+
+  /* requirements table */
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+  tr:last-child td{border-bottom:none}
+
+  /* steps */
+  ol.steps{list-style:none;counter-reset:step;padding:0;margin:18px 0}
+  ol.steps>li{counter-increment:step;position:relative;padding:2px 0 18px 52px;margin:0}
+  ol.steps>li::before{content:counter(step);position:absolute;left:0;top:0;width:34px;height:34px;border-radius:10px;
+    background:var(--green-s);color:var(--brand);border:1.5px solid #bfe6d3;font-weight:700;display:grid;place-items:center;font-size:1rem}
+  ol.steps>li::after{content:"";position:absolute;left:16.5px;top:36px;bottom:2px;width:1.5px;background:var(--line)}
+  ol.steps>li:last-child::after{display:none}
+  ol.steps>li h4{margin:4px 0 4px;font-size:1.04rem}
+  ol.steps>li p{margin:0 0 6px;color:#33424f}
+  ol.steps ul{margin:6px 0;padding-left:18px;color:#33424f}
+  ol.steps ul li{margin:3px 0}
+  .kbd{display:inline-block;background:#fff;border:1px solid #cdd6df;border-bottom-width:2px;border-radius:6px;padding:0 7px;font-size:.82em;font-weight:600;color:#334}
+
+  /* callouts */
+  .note{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--brand);border-radius:10px;padding:14px 18px;box-shadow:var(--shadow);margin:16px 0}
+  .note.tip{border-left-color:var(--brand2)}
+  .note.warn{border-left-color:#d98324;background:var(--amber-s);border-color:#f0d9a8}
+  .note.info{border-left-color:var(--blue);background:var(--blue-s);border-color:#cfe0f5}
+  .note h4{margin:0 0 4px;font-size:.98rem}
+  .note p{margin:0;font-size:.94rem;color:#33424f}
+
+  /* option cards for install choice */
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}
+  .opt{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow)}
+  .opt.recommended{border:1.5px solid var(--brand2);position:relative}
+  .opt .badge{position:absolute;top:-11px;left:18px;background:linear-gradient(135deg,var(--brand2),var(--brand));color:#fff;font-size:.68rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:3px 10px;border-radius:6px}
+  .opt h4{margin:2px 0 4px;font-size:1.08rem}
+  .opt p{margin:0;color:var(--muted);font-size:.9rem}
+
+  /* url block */
+  .urlbox{background:#0f1720;color:#7ff0cf;border-radius:10px;padding:14px 16px;font-family:"SFMono-Regular",Consolas,Menlo,monospace;font-size:.9rem;word-break:break-all;margin:12px 0;border:1px solid #1d2b39}
+
+  /* screenshots — every shot sits in an identical 2:1 frame (contain, no cropping) */
+  figure.shot{margin:14px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;box-shadow:var(--shadow)}
+  figure.shot .frame{aspect-ratio:2 / 1;background:#eef3f7;display:grid;place-items:center;overflow:hidden}
+  figure.shot .frame img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block}
+  figure.shot .frame .ph{display:none;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+    width:100%;height:100%;color:#7a8a99;padding:20px;text-align:center}
+  figure.shot .frame.missing{background:repeating-linear-gradient(45deg,#f7fafc,#f7fafc 12px,#eef3f7 12px,#eef3f7 24px)}
+  figure.shot .frame.missing .ph{display:flex}
+  figure.shot .frame .ph .cam{font-size:1.8rem}
+  figure.shot .frame .ph .lbl{font-weight:600;color:#4a5a68;font-size:.92rem}
+  figure.shot figcaption{padding:9px 14px;font-size:.83rem;color:var(--muted);background:var(--soft);border-top:1px solid var(--line)}
+  figure.shot figcaption b{color:var(--ink)}
+
+  /* mini table of contents */
+  .toc{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px;box-shadow:var(--shadow);margin:22px 0}
+  .toc h3{margin:0 0 8px;font-size:1rem}
+  .toc ol{margin:0;padding-left:20px;columns:2;column-gap:32px}
+  .toc li{margin:4px 0}
+
+  footer{background:#0f1720;color:#93a4b3;padding:30px 0;font-size:.86rem;margin-top:40px}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+  footer a{color:#7ff0cf}
+
+  /* ---------- PRINT / PDF (A4) ---------- */
+  @page{ size:A4; margin:16mm 15mm; }
+  @media print{
+    :root{--shadow:none}
+    body{background:#fff;font-size:10.5pt;line-height:1.5}
+    .toolbar,nav{display:none !important}
+    .wrap{max-width:none;padding:0}
+    a{color:var(--ink)}
+    header.hero{background:#0f1720 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:26px 22px;border-radius:0}
+    .hero h1{font-size:1.9rem}
+    section{padding:14px 0 0}
+    h2.sec{font-size:1.3rem}
+    h2,h3,h4{break-after:avoid-page;page-break-after:avoid}
+    ol.steps>li,figure.shot,.note,.opt,table,tr,.toc,.urlbox,.opts{break-inside:avoid;page-break-inside:avoid}
+    section{break-inside:auto}
+    figure.shot .frame,figure.shot .frame.missing,.note,.opt,.urlbox,th,figcaption{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .page-break{break-before:page;page-break-before:always}
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <button class="btn" onclick="window.print()">⬇ Download PDF</button>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="pill">ENACT Hackathon · Setup</span>
+    <div class="brandrow">
+      <img src="logo.png" alt="ENACT logo" onerror="this.style.display='none'">
+      <h1>Installing Eclipse IDE &amp; the ENACT SDK</h1>
+    </div>
+    <p class="lead">A step-by-step guide to get your development environment ready — install the Eclipse IDE, then add the ENACT Software Development Kit from either the Eclipse Marketplace or the p2 update site.</p>
+    <div class="meta">
+      <span>⏱ ~15 minutes</span>
+      <span>☕ Java 21+</span>
+      <span>🧩 Eclipse 2025-12 (4.38)+</span>
+      <span>💻 Windows · Linux · macOS</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="toc">
+    <h3>What you'll do</h3>
+    <ol>
+      <li><a href="#prereq">Check prerequisites</a></li>
+      <li><a href="#eclipse">Install the Eclipse IDE</a></li>
+      <li><a href="#sdk">Install the ENACT SDK</a></li>
+      <li><a href="#marketplace">Option A — Eclipse Marketplace</a></li>
+      <li><a href="#p2">Option B — p2 update site</a></li>
+      <li><a href="#verify">Verify the installation</a></li>
+    </ol>
+  </div>
+
+  <!-- ============ PREREQUISITES ============ -->
+  <section id="prereq">
+    <div class="sec-tag">Before you start</div>
+    <h2 class="sec"><span class="num">0</span>Prerequisites</h2>
+    <p class="lede">The ENACT SDK is an Eclipse plug-in suite. You need a recent Eclipse IDE and a Java 21 (or newer) runtime. Everything else is installed through this guide.</p>
+    <table>
+      <tr><th>Component</th><th>Requirement</th><th>Notes</th></tr>
+      <tr><td><b>Java Runtime</b></td><td>21 or newer</td><td>The Eclipse Installer can provision one for you (it currently ships a Java&nbsp;25 JRE). Otherwise get it from <a href="https://adoptium.net/">adoptium.net</a>.</td></tr>
+      <tr><td><b>Eclipse IDE</b></td><td>2025-12 (4.38) or newer</td><td>Installed in Step&nbsp;1 below.</td></tr>
+      <tr><td><b>Operating system</b></td><td>Windows, Linux, or macOS</td><td><code>x86_64</code> or <code>aarch64</code> (Apple Silicon).</td></tr>
+      <tr><td><b>AI Assistant</b> <span class="muted">(optional)</span></td><td>Local <a href="https://ollama.com/">Ollama</a> + a tool-capable model</td><td>Only needed if you'll use the AI Assistant module (7B+ model, e.g. <code>qwen2.5</code>).</td></tr>
+    </table>
+    <div class="note tip">
+      <h4>Already have Eclipse installed?</h4>
+      <p>If your Eclipse is <b>2025-12 (4.38) or newer</b> on Java 21+, skip straight to <a href="#sdk">Step&nbsp;2 — Install the ENACT SDK</a>.</p>
+    </div>
+  </section>
+
+  <!-- ============ INSTALL ECLIPSE ============ -->
+  <section id="eclipse">
+    <div class="sec-tag">Part one</div>
+    <h2 class="sec"><span class="num">1</span>Install the Eclipse IDE</h2>
+    <p class="lede">The quickest route is the official Eclipse Installer, which downloads and sets up a ready-to-use IDE package.</p>
+
+    <ol class="steps">
+      <li>
+        <h4>Download the Eclipse Installer</h4>
+        <p>Go to <a href="https://www.eclipse.org/downloads/">eclipse.org/downloads</a> and open the <b>Download</b> menu, then choose the build for your machine — <span class="kbd">Download x86_64</span> for most PCs, or <span class="kbd">Download AArch64</span> for Apple Silicon / ARM. This downloads the <b>Eclipse Installer</b>.</p>
+        <figure class="shot">
+          <div class="frame">
+            <img src="install-guide-images/Eclipse%20downloads%20page.png" alt="Eclipse downloads page" onerror="this.style.display='none';this.closest('.frame').classList.add('missing')">
+            <div class="ph"><span class="cam">📷</span><span class="lbl">Eclipse downloads page</span></div>
+          </div>
+          <figcaption><b>Figure 1.</b> The Eclipse downloads page — expand <b>Download</b> and pick <b>x86_64</b> or <b>AArch64</b>.</figcaption>
+        </figure>
+      </li>
+      <li>
+        <h4>Pick the “Eclipse IDE for Java Developers” package</h4>
+        <p>Launch the downloaded installer. From the list of packages, select <b>“Eclipse IDE for Java Developers”</b> — it includes everything the ENACT SDK needs.</p>
+        <figure class="shot">
+          <div class="frame">
+            <img src="install-guide-images/Installer%20package%20selection.png" alt="Eclipse Installer package list" onerror="this.style.display='none';this.closest('.frame').classList.add('missing')">
+            <div class="ph"><span class="cam">📷</span><span class="lbl">Installer package selection</span></div>
+          </div>
+          <figcaption><b>Figure 2.</b> Selecting “Eclipse IDE for Java Developers” in the Eclipse Installer.</figcaption>
+        </figure>
+      </li>
+      <li>
+        <h4>Choose the Java VM and install folder</h4>
+        <p>Confirm the Java VM the installer offers (a suitable Java&nbsp;21+ JRE — the current installer ships Java&nbsp;25), pick an <b>Installation Folder</b>, and click <span class="kbd">INSTALL</span>. Accept the license agreement when prompted.</p>
+        <figure class="shot">
+          <div class="frame">
+            <img src="install-guide-images/Install%20folder.png" alt="Eclipse Installer VM and install folder" onerror="this.style.display='none';this.closest('.frame').classList.add('missing')">
+            <div class="ph"><span class="cam">📷</span><span class="lbl">Java VM &amp; install folder</span></div>
+          </div>
+          <figcaption><b>Figure 3.</b> Confirming the Java VM and installation folder before installing.</figcaption>
+        </figure>
+      </li>
+      <li>
+        <h4>Launch Eclipse and choose a workspace</h4>
+        <p>Click <span class="kbd">Launch</span> when the install finishes. Eclipse asks for a <b>workspace</b> folder — this is where your projects live. Accept the default or pick your own, then click <span class="kbd">Launch</span>.</p>
+        <figure class="shot">
+          <div class="frame">
+            <img src="install-guide-images/Workspace%20selector.png" alt="Eclipse workspace launcher" onerror="this.style.display='none';this.closest('.frame').classList.add('missing')">
+            <div class="ph"><span class="cam">📷</span><span class="lbl">Workspace selector</span></div>
+          </div>
+          <figcaption><b>Figure 4.</b> The Eclipse IDE launcher asking which directory to use as the workspace.</figcaption>
+        </figure>
+      </li>
+    </ol>
+
+    <div class="note info">
+      <h4>Verify your Eclipse version</h4>
+      <p>Open <b>Help → About Eclipse IDE</b>. Confirm the version is <b>2025-12 (4.38)</b> or newer. If it's older, update Eclipse before installing the SDK.</p>
+    </div>
+  </section>
+
+  <div class="page-break"></div>
+
+  <!-- ============ INSTALL SDK ============ -->
+  <section id="sdk">
+    <div class="sec-tag">Part two</div>
+    <h2 class="sec"><span class="num">2</span>Install the ENACT SDK</h2>
+    <p class="lede">There are two ways to install the SDK. Both install the <b>complete SDK</b> (all modules); you can deselect optional modules in the install wizard before finishing. Pick whichever you prefer.</p>
+
+    <div class="opts">
+      <div class="opt recommended">
+        <span class="badge">Recommended</span>
+        <h4>Option A — Eclipse Marketplace</h4>
+        <p>Search &amp; click Install from inside Eclipse. Easiest for most people. → <a href="#marketplace">Go to Option A</a></p>
+      </div>
+      <div class="opt">
+        <h4>Option B — p2 update site</h4>
+        <p>Add the update-site URL manually via “Install New Software”. → <a href="#p2">Go to Option B</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- OPTION A: MARKETPLACE ---------- -->
+  <section id="marketplace">
+    <h3 style="font-size:1.2rem;color:var(--brand)">Option A — Eclipse Marketplace</h3>
+    <ol class="steps">
+      <li>
+        <h4>Open the Eclipse Marketplace</h4>
+        <p>In the menu bar, choose <b>Help → Eclipse Marketplace…</b></p>
+        <figure class="shot">
+          <div class="frame">
+            <img src="install-guide-images/Eclipse%20Marketplace%20menu%20item.png" alt="Help menu with Eclipse Marketplace item" onerror="this.style.display='none';this.closest('.frame').classList.add('missing')">
+            <div class="ph"><span class="cam">📷</span><span class="lbl">Help → Eclipse Marketplace…</span></div>
+          </div>
+          <figcaption><b>Figure 5.</b> Opening the Eclipse Marketplace from the Help menu.</figcaption>
+        </figure>
+      </li>
+      <li>
+        <h4>Search for the ENACT SDK and click Install</h4>
+        <p>Type <b>ENACT</b> in the <b>Find</b> box and press <span class="kbd">Enter</span>. Locate <b>“ENACT Software Development Kit”</b> (by Siemens, Apache&nbsp;2.0) in the results and click <span class="kbd">Install</span>.</p>
+        <figure class="shot">
+          <div class="frame">
+            <img src="install-guide-images/Marketplace%20search%20result.png" alt="Marketplace search result for ENACT SDK" onerror="this.style.display='none';this.closest('.frame').classList.add('missing')">
+            <div class="ph"><span class="cam">📷</span><span class="lbl">Marketplace search result</span></div>
+          </div>
+          <figcaption><b>Figure 6.</b> The ENACT Software Development Kit entry in the Marketplace search results, with its <b>Install</b> button.</figcaption>
+        </figure>
+      </li>
+      <li>
+        <h4>Confirm the features, accept the license, and restart</h4>
+        <p>Review the selected features (the <b>complete SDK</b> is pre-selected) and click <span class="kbd">Confirm</span>. On the <b>Review Licenses</b> page, accept the <b>Apache&nbsp;2.0</b> license and click <span class="kbd">Finish</span>. When the <b>unsigned content</b> warning appears, choose <span class="kbd">Install anyway / Trust Selected</span>, then <b>restart Eclipse</b> when prompted.</p>
+        <figure class="shot">
+          <div class="frame">
+            <img src="install-guide-images/Feature%20confirmation.png" alt="Review Licenses page" onerror="this.style.display='none';this.closest('.frame').classList.add('missing')">
+            <div class="ph"><span class="cam">📷</span><span class="lbl">Review Licenses page</span></div>
+          </div>
+          <figcaption><b>Figure 7.</b> The <b>Review Licenses</b> page. On a fresh install the Apache&nbsp;2.0 license text appears here to accept; if this machine has already accepted it, the page reads “no licenses to review” and you can click Finish.</figcaption>
+        </figure>
+        <div class="note warn">
+          <h4>“Warning: unsigned content” is expected</h4>
+          <p>This Beta release ships unsigned JARs. It's safe to proceed for the hackathon — choose <b>Install anyway / Trust Selected</b>.</p>
+        </div>
+      </li>
+    </ol>
+    <div class="note tip">
+      <h4>Shortcut: drag-to-install</h4>
+      <p>You can also drag the <b>Install</b> button from the <a href="https://pages.eclipse.dev/eclipse-research-labs/enact-project/software-development-kit/">ENACT SDK landing page</a> straight onto a running Eclipse workbench.</p>
+    </div>
+  </section>
+
+  <div class="page-break"></div>
+
+  <!-- ---------- OPTION B: P2 ---------- -->
+  <section id="p2">
+    <h3 style="font-size:1.2rem;color:var(--brand)">Option B — p2 update site</h3>
+    <p class="lede">Use this if you'd rather add the update site by URL. This is the update-site address:</p>
+    <div class="urlbox">https://pages.eclipse.dev/eclipse-research-labs/enact-project/software-development-kit/releases/latest/</div>
+
+    <ol class="steps">
+      <li>
+        <h4>Open “Install New Software”</h4>
+        <p>Choose <b>Help → Install New Software…</b></p>
+        <figure class="shot">
+          <div class="frame">
+            <img src="install-guide-images/Install%20New%20Software.png" alt="Help menu with Install New Software item" onerror="this.style.display='none';this.closest('.frame').classList.add('missing')">
+            <div class="ph"><span class="cam">📷</span><span class="lbl">Help → Install New Software…</span></div>
+          </div>
+          <figcaption><b>Figure 8.</b> Opening “Install New Software…” from the Help menu.</figcaption>
+        </figure>
+      </li>
+      <li>
+        <h4>Add the update site and select the complete SDK</h4>
+        <p>Click <span class="kbd">Add…</span> next to <b>Work with</b>, then in the <b>Add Repository</b> dialog set <b>Name</b> to <code>ENACT SDK</code> and paste the URL above into <b>Location</b>, and click <span class="kbd">Add</span>. Back in the list, expand <b>ENACT SDK — Complete</b> and tick <b>“ENACT SDK — Complete (install everything)”</b>, then click <span class="kbd">Next</span>.</p>
+        <figure class="shot">
+          <div class="frame">
+            <img src="install-guide-images/Add%20Repository%20dialog.png" alt="Available Software list with the ENACT SDK repository added" onerror="this.style.display='none';this.closest('.frame').classList.add('missing')">
+            <div class="ph"><span class="cam">📷</span><span class="lbl">Available Software — select the complete feature</span></div>
+          </div>
+          <figcaption><b>Figure 9.</b> With the update-site URL in <b>Work with</b>, tick <b>ENACT SDK — Complete (install everything)</b>.</figcaption>
+        </figure>
+      </li>
+      <li>
+        <h4>Review the install details</h4>
+        <p>On the <b>Install Details</b> page you'll see the complete SDK and each module it pulls in (Core, Application Packaging, AI Assistant, Dataspaces, Application Controller, Application Policies). Click <span class="kbd">Next</span>.</p>
+        <figure class="shot">
+          <div class="frame">
+            <img src="install-guide-images/Full%20package%20list.png" alt="Install Details listing the ENACT SDK modules" onerror="this.style.display='none';this.closest('.frame').classList.add('missing')">
+            <div class="ph"><span class="cam">📷</span><span class="lbl">Install Details — items to be installed</span></div>
+          </div>
+          <figcaption><b>Figure 10.</b> The Install Details page listing the complete SDK and all its modules.</figcaption>
+        </figure>
+      </li>
+      <li>
+        <h4>Accept the license, trust &amp; restart</h4>
+        <p>Accept the <b>Apache&nbsp;2.0</b> license and click <span class="kbd">Finish</span>. If the <b>unsigned content</b> warning appears, choose <span class="kbd">Install anyway / Trust Selected</span>. <b>Restart Eclipse</b> when prompted.</p>
+        <div class="note info">
+          <h4>Want a specific version?</h4>
+          <p>A pinned release is always available at <code>…/releases/&lt;tag&gt;/</code> — for example <code>…/releases/v1.3.0/</code> — in addition to the <code>latest</code> alias used above.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <div class="page-break"></div>
+
+  <!-- ---------- VERIFY ---------- -->
+  <section id="verify">
+    <div class="sec-tag">Part three</div>
+    <h2 class="sec"><span class="num">3</span>Verify the installation</h2>
+    <p class="lede">After restarting, open the SDK control panel to confirm everything is in place.</p>
+    <ol class="steps">
+      <li>
+        <h4>Open the Show View menu</h4>
+        <p>From the menu bar, choose <b>Window → Show View → Other…</b></p>
+        <figure class="shot">
+          <div class="frame">
+            <img src="install-guide-images/Show%20View.png" alt="Window menu with Show View submenu" onerror="this.style.display='none';this.closest('.frame').classList.add('missing')">
+            <div class="ph"><span class="cam">📷</span><span class="lbl">Window → Show View → Other…</span></div>
+          </div>
+          <figcaption><b>Figure 11.</b> Opening the Show View list from the Window menu.</figcaption>
+        </figure>
+      </li>
+      <li>
+        <h4>Select the SDK Control Panel</h4>
+        <p>In the <b>Show View</b> dialog, expand the <b>ENACT SDK</b> category, select <b>SDK Control Panel</b>, and click <span class="kbd">Open</span>.</p>
+        <figure class="shot">
+          <div class="frame">
+            <img src="install-guide-images/SDK%20Control%20Panel%20Find.png" alt="Show View dialog with ENACT SDK category expanded" onerror="this.style.display='none';this.closest('.frame').classList.add('missing')">
+            <div class="ph"><span class="cam">📷</span><span class="lbl">Show View → ENACT SDK → SDK Control Panel</span></div>
+          </div>
+          <figcaption><b>Figure 12.</b> Selecting the SDK Control Panel view under the ENACT SDK category.</figcaption>
+        </figure>
+      </li>
+      <li>
+        <h4>Confirm the SDK is running</h4>
+        <p>The Control Panel opens docked to the right, with a navigation bar of module tabs — <b>Home</b>, <b>Application Packaging</b>, <b>Dataspaces</b>, and more. If not all tabs fit, use the <b>‹ ›</b> arrows at the ends of the bar to page through the rest (AI Assistant, Application Controller, Application Policies). You're ready to go.</p>
+        <figure class="shot">
+          <div class="frame">
+            <img src="install-guide-images/Workspace%20view.png" alt="ENACT SDK Control Panel running in the workbench" onerror="this.style.display='none';this.closest('.frame').classList.add('missing')">
+            <div class="ph"><span class="cam">📷</span><span class="lbl">The ENACT SDK Control Panel running</span></div>
+          </div>
+          <figcaption><b>Figure 13.</b> The SDK Control Panel docked in the workbench, showing the module navigation bar and the welcome page.</figcaption>
+        </figure>
+      </li>
+    </ol>
+
+    <div class="note tip">
+      <h4>Updating later</h4>
+      <p>To get new releases, run <b>Help → Check for Updates</b>. The SDK upgrades in place — no manual uninstall needed.</p>
+    </div>
+
+    <div class="note warn">
+      <h4>AI Assistant does nothing / can't find a model?</h4>
+      <p>Make sure a local <a href="https://ollama.com/">Ollama</a> server is running and a tool-capable model is pulled (7B+, e.g. <code>qwen2.5</code>). Smaller models may not emit tool calls reliably.</p>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>ENACT Software Development Kit · Installation Guide · v1.3.0</span>
+    <span>Support: <a href="mailto:mihnea.lopataru@siemens.com">mihnea.lopataru@siemens.com</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
