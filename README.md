@@ -33,7 +33,7 @@ Your local Kind cluster (`enact-dev`) is configured as a **3-node cluster** (1 c
 ```text
 Host System (Your Machine)
  ├── Port 35554 ─────────► TDCME Monitor API (Telemetry & Metrics)
- ├── Port 31080 ─────────► APPLPM API (Application Policy Model)
+ ├── Port 35080 ─────────► APPLPM API (Application Policy Model)
  ├── Port-Forward 3000 ──► Grafana (Metrics & Energy Visualizations)
  ├── Port-Forward 9090 ──► Prometheus (PromQL Engine)
  └── Port-Forward 12000 ─► Hubble UI (Network & Service-to-Service Observability)
@@ -47,7 +47,7 @@ Host System (Your Machine)
 | **Kube-Prometheus-Stack** | Metrics scraping, storage, alerting, and Grafana visualization | Grafana (`:3000`), Prometheus (`:9090`) |
 | **Kepler** | Kubernetes Efficient Power Level Exporter (energy consumption metrics) | Scraped by Prometheus, visual in Grafana |
 | **TDCME (Monitor API & Agent)** | Telemetry Data Collector & Monitoring Engine | Host Port `http://localhost:35554` |
-| **APPLPM** | Application Policy Model & Runtime Policy Controller | Host Port `http://localhost:31080` |
+| **APPLPM** | Application Policy Model & Runtime Policy Controller | Host Port `http://localhost:35080` |
 
 ---
 
@@ -110,7 +110,7 @@ make setup
 
 ### What `make setup` does
 
-1. Creates a 3-node Kind cluster named `enact-dev` using `cluster-config/kind-config.yaml` with host port mappings (`35554` and `31080`).
+1. Creates a 3-node Kind cluster named `enact-dev` using `cluster-config/kind-config.yaml` with host port mappings (`35554` and `35080`).
 2. Disables the default Kind CNI and installs **Cilium CNI 1.20.1** with Hubble UI and Prometheus metrics.
 3. Sets up the `enact` namespace.
 4. Deploys **kube-prometheus-stack** (Prometheus Operator, Alertmanager, Grafana, Node Exporters).
@@ -184,19 +184,19 @@ The Telemetry Data Collector & Monitoring Engine API is accessible directly on y
 
 ### 2. APPLPM API
 
-The Application Policy Model Controller HTTP server provides policy query and label assignment routes directly on host port `31080`:
+The Application Policy Model Controller HTTP server provides policy query and label assignment routes directly on host port `35080`:
 
 - **Check Current Policies:**
 
   ```bash
-  curl http://localhost:31080/api/v1/namespaces/enact/policies
+  curl http://localhost:35080/api/v1/namespaces/enact/policies
   ```
 
 - **Node Labels API:**
 
   ```bash
   # Check policy or labels for a node
-  curl -X POST http://localhost:31080/api/v1/nodes/enact-dev-worker/labels
+  curl -X POST http://localhost:35080/api/v1/nodes/enact-dev-worker/labels
   ```
 
 ---
@@ -325,7 +325,7 @@ Verify the policy is recognized by APPLPM:
 
 ```bash
 kubectl get runtimepolicies.enact.eu -n enact
-curl http://localhost:31080/api/v1/namespaces/enact/policies
+curl http://localhost:35080/api/v1/namespaces/enact/policies
 ```
 
 ---
@@ -374,14 +374,14 @@ This will:
 
   or log out and back in after running `sudo usermod -aG docker $USER`.
 
-### 2. Port Conflict (`bind: address already in use` on 35554 or 31080)
+### 2. Port Conflict (`bind: address already in use` on 35554 or 35080)
 
-- Kind maps `35554` (TDCME) and `31080` (APPLPM) on `0.0.0.0`.
+- Kind maps `35554` (TDCME) and `35080` (APPLPM) on `0.0.0.0`.
 - If another process is using these ports, identify it with:
 
   ```bash
   lsof -i :35554
-  lsof -i :31080
+  lsof -i :35080
   ```
 
 - Terminate the conflicting process or modify the hostPort mappings in [cluster-config/kind-config.yaml](cluster-config/kind-config.yaml).
