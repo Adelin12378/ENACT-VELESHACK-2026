@@ -54,6 +54,32 @@ setup:
 	--set agent.prometheusHost="http://infra-kube-prometheus-stac-prometheus.enact.svc.cluster.local:9090" \
 
 	helm install applpm enact-applpm/appl --namespace enact
+    
+	echo "Waiting for all Pods to start"
+	kubectl wait --for=condition=ready pod -n enact --all --timeout=120s
+	echo "Labeling nodes"
+ 
+	curl -X POST http://0.0.0.0:35580/api/v1/nodes/enact-dev-worker/labels \
+	  -H "Content-Type: application/json" \
+	  -d '{
+	    "add": {
+	      "enact.eu/green-ratio": "0.85",
+	      "enact.eu/role": "edge",
+	      "enact.eu/region": "eu-west-1",
+	      "enact.eu/zone": "eu-west-1a"
+	    }
+	  }'
+
+	curl -X POST http://0.0.0.0:35580/api/v1/nodes/enact-dev-worker2/labels \
+	  -H "Content-Type: application/json" \
+	  -d '{
+	    "add": {
+	      "enact.eu/green-ratio": "0.9",
+	      "enact.eu/role": "cloud",
+	      "enact.eu/region": "eu-west-2",
+	      "enact.eu/zone": "eu-west-2a"
+	    }
+	  }'
 
 
 	echo "All ENACT components have been installed. Refer to ENACT Eclipse Gitlab space for component documentation: https://gitlab.eclipse.org/eclipse-research-labs/enact-project"

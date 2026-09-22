@@ -8,8 +8,8 @@ nodes:
       hostPort: 35554
       listenAddress: "0.0.0.0"
       protocol: TCP
-    - containerPort: 31080
-      hostPort: 35080
+    - containerPort: 32580
+      hostPort: 35580
       listenAddress: "0.0.0.0"
       protocol: TCP
 - role: worker

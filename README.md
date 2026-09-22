@@ -147,10 +147,10 @@ All pods in the `enact` namespace should transition to `Running` (Ready: `1/1`, 
 ```text
 NAME                                                     READY   STATUS    RESTARTS   AGE
 alertmanager-infra-kube-prometheus-stac-alertmanager-0   2/2     Running   0          5m
-applpm-controller-manager-xxxxxxxxxx-xxxxx                1/1     Running   0          5m
+applpm-controller-manager-xxxxxxxxxx-xxxxx               1/1     Running   0          5m
 infra-grafana-xxxxxxxxxx-xxxxx                           3/3     Running   0          5m
 infra-kube-prometheus-stac-operator-xxxxxxxxxx-xxxxx     1/1     Running   0          5m
-infra-kube-state-metrics-xxxxxxxxxx-xxxxx                 1/1     Running   0          5m
+infra-kube-state-metrics-xxxxxxxxxx-xxxxx                1/1     Running   0          5m
 infra-prometheus-node-exporter-xxxxx                     1/1     Running   0          5m
 kepler-xxxxx                                             1/1     Running   0          5m
 monitor-api-xxxxxxxxxx-xxxxx                             1/1     Running   0          5m
