@@ -1,0 +1,13 @@
+server:
+  port: 8080
+
+# ENACT Step 1 (Dataspaces): after negotiating a contract with the utility's
+# provider and transferring the carbon-feed file onto this machine, set this to
+# the path of that file. This is the ONLY line of app config a team edits.
+carbon:
+  feed:
+    file: REPLACE_ME
+
+# Auto-open the browser on startup (set false in containers / CI).
+app:
+  open-browser: true

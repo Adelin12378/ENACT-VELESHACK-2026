@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GreenCharge ⚡🌱</title>
+<style>
+  :root{
+    --bg:#0f1720; --bg2:#131e2a; --panel:#ffffff; --ink:#1a2430; --muted:#5b6b7a;
+    --line:#e3e9ef; --soft:#f4f7fa; --brand:#0e7f6b; --brand2:#12b886;
+    --green:#1a9e5a; --amber:#b7791f; --radius:16px; --shadow:0 8px 30px rgba(15,23,32,.08);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--soft);color:var(--ink);line-height:1.55}
+  .wrap{max-width:900px;margin:0 auto;padding:0 22px}
+  header{background:radial-gradient(1000px 400px at 70% -20%,rgba(18,184,134,.28),transparent),linear-gradient(180deg,var(--bg),var(--bg2));color:#eaf1f6;padding:40px 0 46px}
+  header h1{margin:0 0 6px;font-size:2rem;color:#fff}
+  header p{margin:0;color:#b9c7d3}
+  .badge{display:inline-flex;align-items:center;gap:8px;margin-top:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:#d7e2ec;font-size:.85rem;padding:7px 14px;border-radius:999px}
+  .badge .dot{width:9px;height:9px;border-radius:50%;background:#f0b429}
+  .badge.live .dot{background:#12b886;box-shadow:0 0 10px #12b886}
+  main{padding:34px 0 60px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin-bottom:20px}
+  h2{font-size:1.15rem;margin:0 0 14px}
+  .rec{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .rec .pick{flex:1;min-width:220px}
+  .rec .pick .name{font-size:1.5rem;font-weight:700;color:var(--brand)}
+  .rec .pick .sub{color:var(--muted);font-size:.92rem}
+  .score{width:88px;height:88px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:1.4rem;background:conic-gradient(var(--brand2) var(--pct,0%),#e3e9ef 0)}
+  .score span{background:#fff;color:var(--brand);width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-size:1.2rem}
+  button{background:linear-gradient(135deg,var(--brand2),var(--brand));color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:.95rem;font-weight:600;cursor:pointer}
+  button:hover{filter:brightness(1.06)}
+  .bars{display:flex;flex-direction:column;gap:10px}
+  .bar{display:grid;grid-template-columns:110px 1fr 90px;align-items:center;gap:12px;font-size:.9rem}
+  .bar .track{background:#eef2f6;border-radius:8px;height:16px;overflow:hidden}
+  .bar .fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--brand2),var(--brand))}
+  .bar .val{color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  table{width:100%;border-collapse:collapse;font-size:.92rem}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-size:.76rem;text-transform:uppercase;letter-spacing:.5px}
+  tr.full{opacity:.5}
+  .tag{display:inline-block;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:6px}
+  .tag.win{background:#e6f3ea;color:#237a45}
+  .tag.full{background:#fbe6e2;color:#b0392b}
+  .muted{color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>GreenCharge ⚡🌱</h1>
+    <p>Routing EV drivers to the greenest available charger, right now.</p>
+    <div class="badge" id="source"><span class="dot"></span> checking carbon feed…</div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="card">
+    <h2>Recommended charger</h2>
+    <div class="rec">
+      <div class="pick">
+        <div class="name" id="recName">—</div>
+        <div class="sub" id="recSub">Tap "Find greenest" to route.</div>
+        <div style="margin-top:14px"><button onclick="route()">Find greenest charger</button></div>
+      </div>
+      <div class="score" id="recScore"><span id="recScoreVal">–</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Grid carbon intensity by district</h2>
+    <div class="bars" id="carbonBars"><p class="muted">loading…</p></div>
+    <p class="muted" style="margin-top:14px">Greener = lower gCO₂/kWh. When the live utility feed is connected (ENACT Step 1), these values and the recommendation change automatically.</p>
+  </div>
+
+  <div class="card">
+    <h2>All chargers</h2>
+    <table>
+      <thead><tr><th>Charger</th><th>District</th><th>Availability</th><th></th></tr></thead>
+      <tbody id="chargerRows"><tr><td colspan="4" class="muted">loading…</td></tr></tbody>
+    </table>
+  </div>
+</main>
+
+<script>
+async function getJSON(url, opts){ const r = await fetch(url, opts); if(!r.ok) throw new Error(r.status); return r.json(); }
+
+async function loadCarbon(){
+  const c = await getJSON('/carbon');
+  const badge = document.getElementById('source');
+  const live = c.source.startsWith('live');
+  badge.className = 'badge' + (live ? ' live' : '');
+  badge.innerHTML = '<span class="dot"></span> Carbon feed: ' + c.source;
+
+  const entries = Object.entries(c.intensity).sort((a,b)=>a[1]-b[1]);
+  document.getElementById('carbonBars').innerHTML = entries.map(([d,v])=>{
+    const score = c.greenScore[d] ?? 0;
+    return `<div class="bar"><div>${d}</div><div class="track"><div class="fill" style="width:${score}%"></div></div><div class="val">${v} gCO₂/kWh</div></div>`;
+  }).join('');
+}
+
+async function loadChargers(){
+  const list = await getJSON('/chargers');
+  document.getElementById('chargerRows').innerHTML = list.map(c=>{
+    const full = c.availableSlots === 0;
+    return `<tr class="${full?'full':''}"><td>${c.name}</td><td>${c.district}</td><td>${c.availableSlots} / ${c.totalSlots} free</td><td>${full?'<span class="tag full">Full</span>':''}</td></tr>`;
+  }).join('');
+}
+
+async function route(){
+  const r = await getJSON('/route', {method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'});
+  if(!r.recommended){ document.getElementById('recSub').textContent = 'No chargers available.'; return; }
+  const rec = r.recommended;
+  document.getElementById('recName').textContent = rec.name;
+  document.getElementById('recSub').textContent = `${rec.district} · ${rec.carbonIntensity} gCO₂/kWh · ${rec.availableSlots} slots free`;
+  document.getElementById('recScoreVal').textContent = rec.greenScore;
+  document.getElementById('recScore').style.setProperty('--pct', rec.greenScore + '%');
+}
+
+async function refresh(){ try{ await Promise.all([loadCarbon(), loadChargers()]); await route(); }catch(e){ console.error(e); } }
+refresh();
+setInterval(loadCarbon, 15000);
+</script>
+</body>
+</html>
