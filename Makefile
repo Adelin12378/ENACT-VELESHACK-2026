@@ -6,6 +6,8 @@ setup:
 	echo "Setting context to kind cluster..."
 	kubectl config use-context kind-enact-dev
 
+	kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
 	echo "Installing Cilium CNI"
 	helm repo add cilium https://helm.cilium.io/ --force-update
 	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts   --force-update
