@@ -67,7 +67,7 @@ setup:
 	    "add": {
 	      "enact.eu/green-ratio": "0.85",
 	      "enact.eu/role": "edge",
-	      "enact.eu/region": "eu-west-1",
+	      "enact.eu/region": "eu-west",
 	      "enact.eu/zone": "eu-west-1a"
 	    }
 	  }'
@@ -78,7 +78,7 @@ setup:
 	    "add": {
 	      "enact.eu/green-ratio": "0.9",
 	      "enact.eu/role": "cloud",
-	      "enact.eu/region": "eu-west-2",
+	      "enact.eu/region": "eu-west",
 	      "enact.eu/zone": "eu-west-2a"
 	    }
 	  }'
