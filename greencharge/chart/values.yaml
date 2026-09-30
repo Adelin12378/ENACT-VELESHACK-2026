@@ -60,3 +60,36 @@ env:
 nodeSelector: {}
 tolerations: []
 affinity: {}
+
+configMap:
+  enabled: true
+  applicationYaml: |
+    server:
+      port: 8080
+    carbon:
+      feed:
+        file: "REPLACE_ME"
+    app:
+      open-browser: false
+  applicationProperties: |
+    # --- Database Configuration (H2 example) ---
+    spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    spring.datasource.driverClassName=org.h2.Driver
+    spring.datasource.username=sa
+    spring.datasource.password=
+    spring.jpa.hibernate.ddl-auto=update
+    spring.h2.console.enabled=true
+    spring.h2.console.path=/h2-console
+
+    # --- Server & Actuator Ports ---
+    server.port=8080
+    management.server.port=8081
+    management.endpoints.web.exposure.include=health,info,metrics,prometheus
+
+    # --- Swagger UI ---
+    springdoc.swagger-ui.path=/swagger-ui.html
+
+    # --- Disable Native Hardware Metrics (Crucial for Non-Linux/Dev Machines) ---
+    enact.metrics.enabled=false
+    enact.metrics.gpu.enabled=false
+    enact.metrics.opencl.enabled=false
