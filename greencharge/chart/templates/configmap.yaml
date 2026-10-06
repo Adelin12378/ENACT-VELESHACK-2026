@@ -1,0 +1,41 @@
+{{- if .Values.configMap.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "greencharge.fullname" . }}-config
+  labels:
+    {{- include "greencharge.labels" . | nindent 4 }}
+data:
+  application.yaml: |
+{{- if .Values.configMap.applicationYaml }}
+{{ .Values.configMap.applicationYaml | indent 4 }}
+{{- else if .Values.configMap.applicationYml }}
+{{ .Values.configMap.applicationYml | indent 4 }}
+{{- else }}
+    server:
+      port: {{ .Values.service.port }}
+    carbon:
+      feed:
+        file: "REPLACE_ME"
+    app:
+      open-browser: false
+{{- end }}
+  application.yml: |
+{{- if .Values.configMap.applicationYaml }}
+{{ .Values.configMap.applicationYaml | indent 4 }}
+{{- else if .Values.configMap.applicationYml }}
+{{ .Values.configMap.applicationYml | indent 4 }}
+{{- else }}
+    server:
+      port: {{ .Values.service.port }}
+    carbon:
+      feed:
+        file: "REPLACE_ME"
+    app:
+      open-browser: false
+{{- end }}
+{{- if .Values.configMap.applicationProperties }}
+  application.properties: |
+{{ .Values.configMap.applicationProperties | indent 4 }}
+{{- end }}
+{{- end }}

@@ -12,6 +12,10 @@ nodes:
       hostPort: 35580
       listenAddress: "0.0.0.0"
       protocol: TCP
+    - containerPort: 32585
+      hostPort: 35555
+      listenAddress: "0.0.0.0"
+      protocol: TCP
 - role: worker
 - role: worker
 networking:

@@ -1,0 +1,95 @@
+# Default values for greencharge.
+# This is a YAML-formatted file.
+
+replicaCount: 1
+
+image:
+  # replace ghcr.io/thanasislt/enact-veleshack-2026/greencharge:latest with your ghcr.io image
+  repository: ghcr.io/thanasislt/enact-veleshack-2026/greencharge
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "sha-e7b1463"
+
+# create your secret with the following command:
+# kubectl create secret ghcr --docker-server=<ghcr.io/XXXX> --docker-username=<USERNAME> --docker-password=<GITHUB_TOKEN> --docker-email=<EMAIL>
+imagePullSecrets: 
+  - name: ghcr
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: NodePort
+  port: 8080
+  # do not edit the nodePort. Kind is configured to NAT to this nodePort.
+  nodePort: 32585
+
+ingress:
+  enabled: true
+  className: ""
+  annotations: {}
+  hosts:
+    - host: greencharge.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+env:
+  - name: APP_OPEN_BROWSER
+    value: "false"
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+configMap:
+  enabled: true
+  applicationYaml: |
+    server:
+      port: 8080
+    carbon:
+      feed:
+        file: "REPLACE_ME"
+    app:
+      open-browser: false
+  applicationProperties: |
+    # --- Database Configuration (H2 example) ---
+    spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    spring.datasource.driverClassName=org.h2.Driver
+    spring.datasource.username=sa
+    spring.datasource.password=
+    spring.jpa.hibernate.ddl-auto=update
+    spring.h2.console.enabled=true
+    spring.h2.console.path=/h2-console
+
+    # --- Server & Actuator Ports ---
+    server.port=8080
+    management.server.port=8081
+    management.endpoints.web.exposure.include=health,info,metrics,prometheus
+
+    # --- Swagger UI ---
+    springdoc.swagger-ui.path=/swagger-ui.html
+
+    # --- Disable Native Hardware Metrics (Crucial for Non-Linux/Dev Machines) ---
+    enact.metrics.enabled=false
+    enact.metrics.gpu.enabled=false
+    enact.metrics.opencl.enabled=false

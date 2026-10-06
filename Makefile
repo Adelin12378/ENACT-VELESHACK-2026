@@ -6,6 +6,8 @@ setup:
 	echo "Setting context to kind cluster..."
 	kubectl config use-context kind-enact-dev
 
+	kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
 	echo "Installing Cilium CNI"
 	helm repo add cilium https://helm.cilium.io/ --force-update
 	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts   --force-update
@@ -65,7 +67,7 @@ setup:
 	    "add": {
 	      "enact.eu/green-ratio": "0.85",
 	      "enact.eu/role": "edge",
-	      "enact.eu/region": "eu-west-1",
+	      "enact.eu/region": "eu-west",
 	      "enact.eu/zone": "eu-west-1a"
 	    }
 	  }'
@@ -76,7 +78,7 @@ setup:
 	    "add": {
 	      "enact.eu/green-ratio": "0.9",
 	      "enact.eu/role": "cloud",
-	      "enact.eu/region": "eu-west-2",
+	      "enact.eu/region": "eu-west",
 	      "enact.eu/zone": "eu-west-2a"
 	    }
 	  }'

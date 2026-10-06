@@ -1,0 +1,6 @@
+apiVersion: v2
+name: greencharge
+description: A Helm chart for GreenCharge - Carbon-aware EV charger routing service
+type: application
+version: 0.1.0
+appVersion: "1.0"
