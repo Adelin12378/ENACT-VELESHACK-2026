@@ -6,7 +6,7 @@ server:
 # the path of that file. This is the ONLY line of app config a team edits.
 carbon:
   feed:
-    file: REPLACE_ME
+    file: /mnt/c/dev/ENACT-VELESHACK-2026/greencharge/live-carbon-feed.json
 
 # Auto-open the browser on startup (set false in containers / CI).
 app:

@@ -1,0 +1,42 @@
+application:
+  name: greencharge
+  version: "1.0.0"
+
+policies:
+  - id: region-placement-hard
+    name: "Region Placement Constraint"
+    type: HARD
+    target: "eu-west"
+    metric: "node.region"
+    operator: EQUALS
+    threshold: "eu-west"
+
+  - id: availability-hard
+    name: "High Availability Constraint"
+    type: HARD
+    metric: "service.availability"
+    operator: GREATER_THAN_OR_EQUAL
+    threshold: 0.90
+
+  - id: green-energy-soft
+    name: "Green Energy Priority"
+    type: SOFT
+    metric: "node.green_energy_score"
+    operator: GREATER_THAN_OR_EQUAL
+    threshold: 0.60
+    weight: 0.8
+
+adaptation:
+  metrics:
+    cpu_utilization:
+      scale_up_threshold: 80.0
+      scale_down_threshold: 20.0
+
+    memory_utilization:
+      scale_up_threshold: 85.0
+      scale_down_threshold: 25.0
+
+  actions:
+    - scale_up
+    - scale_down
+    - no_action
