@@ -51,17 +51,19 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           livenessProbe:
-            httpGet:
-              path: /chargers
+            tcpSocket:
               port: http
-            initialDelaySeconds: 15
+            initialDelaySeconds: 90
             periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
           readinessProbe:
-            httpGet:
-              path: /chargers
+            tcpSocket:
               port: http
-            initialDelaySeconds: 10
+            initialDelaySeconds: 60
             periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
           {{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}

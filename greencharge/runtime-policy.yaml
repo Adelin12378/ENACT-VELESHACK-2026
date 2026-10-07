@@ -1,0 +1,25 @@
+apiVersion: enact.eu/v1alpha1
+kind: RuntimePolicy
+
+metadata:
+  name: greencharge-policy
+  namespace: enact
+
+spec:
+  appNamespace: enact
+
+  appLabels:
+    name: greencharge
+
+  greenEnergy:
+    minRatio: 0.6
+    mode: Soft
+
+  location:
+    regions:
+      - eu-west
+    mode: Hard
+
+  availability:
+    nodeAvailability: 0.9
+    requireReady: true

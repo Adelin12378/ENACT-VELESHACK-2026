@@ -5,15 +5,15 @@ replicaCount: 1
 
 image:
   # replace ghcr.io/thanasislt/enact-veleshack-2026/greencharge:latest with your ghcr.io image
-  repository: ghcr.io/thanasislt/enact-veleshack-2026/greencharge
-  pullPolicy: Always
+  repository: greencharge
+  pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "sha-e7b1463"
+  tag: "1.0"
 
 # create your secret with the following command:
 # kubectl create secret ghcr --docker-server=<ghcr.io/XXXX> --docker-username=<USERNAME> --docker-password=<GITHUB_TOKEN> --docker-email=<EMAIL>
-imagePullSecrets: 
-  - name: ghcr
+imagePullSecrets: []
+
 nameOverride: ""
 fullnameOverride: ""
 
